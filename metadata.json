@@ -1,0 +1,6 @@
+{
+  "name": "Pebble & Sunbeam Design System",
+  "description": "Tender Craft UI design language with soft-molded wooden and clay aesthetics, squircles, volumetric marshmallow buttons, and tactile jelly interactions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PebbleModal, PebbleButton } from '../design-system';
+import { CUModal } from '../design-system/components/CUModal';
 
 interface CodeExportModalProps {
   isOpen: boolean;
@@ -11,90 +11,76 @@ export const CodeExportModal: React.FC<CodeExportModalProps> = ({ isOpen, onClos
   const [copied, setCopied] = useState(false);
 
   const snippets = {
-    tailwind: `// tailwind.config.js / @theme tokens
+    tailwind: `// tailwind.config.js - CU Convenience Store (BGF Retail) Tokens
 module.exports = {
   theme: {
     extend: {
       colors: {
-        'oat-milk': '#FAF7F2',
-        'sweet-butter': '#FFFDF9',
-        'dark-truffle': '#2D2522',
-        'warm-clay': '#786B65',
-        'steamed-rice': '#F0EAE1',
-        'clementine': '#FF8A50',
-        'clementine-dark': '#E5692A',
-        'matcha': '#5BB98C',
-        'matcha-dark': '#439B6F',
-        'berry': '#8C7CFF',
-        'spiced-coral': '#EE5D50',
-        'honeycomb': '#F5A623',
-        'faded-chalk': '#EADBCE',
+        'cu-purple': '#751485', // Pantone 267C Corporate Primary
+        'cu-purple-dark': '#580F63',
+        'cu-green': '#9DC92A',  // Pantone 368C Brand Secondary
+        'cu-lime': '#37D243',   // 1+1 Digital Promotion Lime
+        'cu-violet': '#8059EA', // 2+1 Digital Promotion Violet
+        'cu-heyroo': '#FFB800', // HEYROO PB Golden Yellow
+        'cu-red': '#FF4757',    // NEW / Sale / Fire Alert
+        'cu-canvas': '#F5F6F8', // Retail Body Canvas
+        'cu-card': '#FFFFFF',   // Product Card Surface
+        'cu-border': '#E5E7EB', // Card Border Neutral
       },
       borderRadius: {
-        'asym': '28px 18px 28px 14px',
-        'asym-alt': '18px 28px 14px 28px',
-        'modal': '36px',
-        'trench': '20px',
+        'cu-bubble': '20px 20px 20px 4px', // Speech bubble signature
+        'cu-card': '18px',
+        'cu-modal': '24px',
       },
-      transitionTimingFunction: {
-        'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      fontFamily: {
+        retail: ['Noto Sans KR', 'Roboto', 'sans-serif'],
       },
     },
   },
 };`,
-    css: `/* Pebble & Sunbeam Signature CSS Variables & Shadows */
+    css: `/* CU Convenience Store (BGF Retail) CSS Design Variables */
 :root {
-  --color-oat-milk: #FAF7F2;
-  --color-sweet-butter: #FFFDF9;
-  --color-dark-truffle: #2D2522;
-  --color-warm-clay: #786B65;
-  --color-clementine: #FF8A50;
-  --color-matcha: #5BB98C;
-  --color-berry: #8C7CFF;
-  --color-steamed-rice: #F0EAE1;
-  --color-spiced-coral: #EE5D50;
-  --color-honeycomb: #F5A623;
+  --cu-purple: #751485;
+  --cu-purple-dark: #580F63;
+  --cu-green: #9DC92A;
+  --cu-lime: #37D243;
+  --cu-violet: #8059EA;
+  --cu-heyroo: #FFB800;
+  --cu-red: #FF4757;
+  --cu-canvas: #F5F6F8;
+  --cu-surface: #FFFFFF;
+  --cu-border: #E5E7EB;
+  --cu-text-primary: #1E1E1E;
+  --cu-text-muted: #666666;
 
-  /* Easing */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Marshmallow Button 3D Offset */
-.btn-marshmallow {
-  box-shadow: 0 4px 0 0 #E5692A, 0 8px 18px -2px rgba(92,60,40,0.15);
-  transition: transform 180ms var(--ease-spring), box-shadow 180ms var(--ease-spring);
-}
-.btn-marshmallow:active {
-  transform: translateY(3px) scale(0.94);
-  box-shadow: 0 1px 0 0 #E5692A, 0 2px 6px -1px rgba(92,60,40,0.10);
-}
-
-/* Warm Ambient Shadows */
-.shadow-pebble {
-  box-shadow: 0 10px 24px -4px rgba(92, 60, 40, 0.07), 0 2px 6px -1px rgba(92, 60, 40, 0.03);
+  /* Card Geometry */
+  --radius-card: 18px;
+  --radius-modal: 24px;
+  --radius-bubble: 20px 20px 20px 4px;
 }`,
-    react: `import React, { useState } from 'react';
+    react: `// React Example: Using CU Design Tokens & Components
+import { CUProductCard, CUBadge, CUModal } from '@/design-system';
 
-// Example: Volumetric Marshmallow Button with Squish & Release
-export function MarshmallowButton({ children, onClick }) {
-  const [pressed, setPressed] = useState(false);
-
+export function FeaturedPromotions() {
   return (
-    <button
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      onClick={onClick}
-      className={\`
-        px-5 py-2.5 rounded-[18px] font-bold text-sm bg-[#FF8A50] text-[#2D2522]
-        transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-        \${pressed
-          ? 'translate-y-[3px] scale-[0.94] shadow-[0_1px_0_0_#E5692A]'
-          : 'shadow-[0_4px_0_0_#E5692A,0_8px_16px_rgba(92,60,40,0.12)] hover:scale-[1.01]'
-        }
-      \`}
-    >
-      {children}
-    </button>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#F5F6F8] p-6">
+      <CUProductCard
+        product={{
+          id: 'yonsei-bread',
+          name: 'Yonsei Fresh Milk Cream Bread',
+          price: 2900,
+          imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=600&fit=crop',
+          category: 'snacks_dessert',
+          categoryLabel: 'Dessert / Bakery',
+          badge: 'plus2',
+          secondaryTag: 'cuOnly',
+          description: 'Over 80% whipped fresh milk cream by weight!',
+          stockCount: 6,
+        }}
+        onSelect={(p) => console.log('Selected:', p.name)}
+        onAddToCart={(p) => console.log('Added to cart:', p.name)}
+      />
+    </div>
   );
 }`,
   };
@@ -106,41 +92,52 @@ export function MarshmallowButton({ children, onClick }) {
   };
 
   return (
-    <PebbleModal
+    <CUModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Export Pebble & Sunbeam Tokens"
-      subtitle="Copy ready-to-use configuration for Tailwind, CSS, or React"
-      maxWidth="max-w-2xl"
+      maxWidth="max-w-xl"
+      title="Export CU Design Tokens & Code"
+      subtitle="Copy ready-to-use Tailwind config, CSS variables, or React code snippets"
       footer={
-        <div className="w-full flex items-center justify-between">
-          <span className="text-xs text-[#786B65]">
-            Licensed under Tender Craft Open UI
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400 font-mono">
+            {activeSnippet === 'tailwind' ? 'tailwind.config.js' : activeSnippet === 'css' ? 'tokens.css' : 'React.tsx'}
           </span>
           <div className="flex gap-2">
-            <PebbleButton variant="butter" size="sm" onClick={onClose}>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-200 text-gray-700 text-xs font-bold rounded-[12px] hover:bg-gray-100 transition-colors cursor-pointer"
+            >
               Done
-            </PebbleButton>
-            <PebbleButton variant="clementine" size="sm" onClick={handleCopy}>
-              {copied ? 'Copied to Clipboard!' : 'Copy Snippet'}
-            </PebbleButton>
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="px-4 py-2 bg-[#751485] hover:bg-[#580F63] text-white text-xs font-bold rounded-[12px] shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              {copied ? '✓ Copied to Clipboard!' : 'Copy Code Snippet'}
+            </button>
           </div>
         </div>
       }
     >
       <div className="space-y-4">
         {/* Format Selector */}
-        <div className="flex gap-2 p-1 bg-[#F0EAE1] rounded-[16px] border border-[#E2D8CC]">
+        <div className="flex gap-1.5 p-1 bg-gray-100 rounded-[14px]">
           {[
             { id: 'tailwind' as const, label: 'Tailwind Config' },
-            { id: 'css' as const, label: 'CSS Variables & Rules' },
+            { id: 'css' as const, label: 'CSS Variables' },
             { id: 'react' as const, label: 'React Component' },
           ].map((tab) => (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveSnippet(tab.id)}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-[12px] transition-colors ${
-                activeSnippet === tab.id ? 'bg-[#FFFDF9] text-[#2D2522] shadow-sm' : 'text-[#786B65]'
+              className={`flex-1 py-2 text-xs font-bold rounded-[10px] transition-all cursor-pointer ${
+                activeSnippet === tab.id
+                  ? 'bg-white text-[#751485] shadow-xs'
+                  : 'text-gray-500 hover:text-black'
               }`}
             >
               {tab.label}
@@ -150,11 +147,11 @@ export function MarshmallowButton({ children, onClick }) {
 
         {/* Code display */}
         <div className="relative">
-          <pre className="p-4 bg-[#2D2522] text-[#FAF7F2] rounded-[20px] text-xs font-mono overflow-x-auto max-h-[340px] leading-relaxed shadow-inner">
+          <pre className="p-4 bg-[#1E1E1E] text-[#F5F6F8] rounded-[16px] text-xs font-mono overflow-x-auto max-h-[320px] leading-relaxed shadow-inner">
             {snippets[activeSnippet]}
           </pre>
         </div>
       </div>
-    </PebbleModal>
+    </CUModal>
   );
 };

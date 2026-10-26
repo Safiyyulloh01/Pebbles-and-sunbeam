@@ -1,457 +1,328 @@
 import React, { useState } from 'react';
 import {
-  PebbleButton,
-  PebbleCard,
-  PebbleInput,
-  PebbleToggle,
-  PebbleCheckbox,
-  PebbleModal,
-  PebbleDropdown,
-  PebbleProgressBar,
-  PebbleSkeleton,
-  PebbleSpinner,
-  PebbleCallout,
-  PebbleTooltip,
-  PebbleBadge,
-  PebbleEmptyState,
+  CUProductCard,
+  CUBadge,
+  CUBadgeType,
+  CUProductDetailModal,
+  CUOneQRModal,
+  CUStockModal,
+  CUProductItem,
 } from '../design-system';
+import { CUCartModal, CartItem } from '../design-system/components/CUCartModal';
+import { CU_SAMPLE_PRODUCTS } from './CUMarketLiveApp';
 
 export const ComponentLibraryView: React.FC = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [dropdownVal, setDropdownVal] = useState('tea');
-  const [toggle1, setToggle1] = useState(true);
-  const [toggle2, setToggle2] = useState(false);
-  const [check1, setCheck1] = useState(true);
-  const [check2, setCheck2] = useState(false);
+  const [detailProduct, setDetailProduct] = useState<CUProductItem | null>(null);
+  const [stockProduct, setStockProduct] = useState<CUProductItem | null>(null);
+  const [oneQROpen, setOneQROpen] = useState(false);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
+
+  const [cartItems, setCartItems] = useState<CartItem[]>([
+    { product: CU_SAMPLE_PRODUCTS[0], quantity: 2 },
+    { product: CU_SAMPLE_PRODUCTS[4], quantity: 1 },
+  ]);
+
+  const handleUpdateQuantity = (productId: string, delta: number) => {
+    setCartItems((prev) =>
+      prev
+        .map((i) => {
+          if (i.product.id === productId) {
+            const nextQty = i.quantity + delta;
+            return nextQty > 0 ? { ...i, quantity: nextQty } : null;
+          }
+          return i;
+        })
+        .filter(Boolean) as CartItem[]
+    );
+  };
+
+  const badgeShowcase: { type: CUBadgeType; label: string; desc: string }[] = [
+    { type: 'plus1', label: '1+1 Buy 1 Get 1', desc: 'Pantone 368C / Lime Green (#37D243). Doubles purchasing volume.' },
+    { type: 'plus2', label: '2+1 Buy 2 Get 1', desc: 'Digital Violet (#8059EA). 33% bundle discount value.' },
+    { type: 'new', label: 'NEW Arrival', desc: 'Energy Red (#FF4757). Highlights fresh seasonal releases.' },
+    { type: 'best', label: 'BEST Seller', desc: 'CU Corporate Purple (#751485). Top trending convenience items.' },
+    { type: 'cuOnly', label: 'CU Exclusive', desc: 'HEYROO Golden Yellow (#FFB800). Private brand specialty.' },
+    { type: 'sale', label: 'Direct Sale', desc: 'Discounted retail clearance price badge.' },
+    { type: 'hot', label: 'Viral / Hot', desc: 'TikTok & SNS trending snack sensation.' },
+  ];
 
   return (
-    <div className="space-y-12 pb-20">
+    <div className="space-y-12 pb-24 font-['Noto_Sans_KR',sans-serif]">
       {/* Intro Hero */}
-      <div className="bg-[#FFFDF9] border border-[#EADBCE]/70 rounded-[28px] p-6 sm:p-10 shadow-sm">
-        <span className="text-xs font-bold uppercase tracking-wider text-[#FF8A50] mb-2 inline-block">
-          Specification Catalog
-        </span>
-        <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[#2D2522] tracking-tight">
-          Pebble & Sunbeam Component Anatomy
+      <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-6 sm:p-10 shadow-xs">
+        <div className="inline-flex items-center gap-2 bg-[#F6EDF8] px-3 py-1 rounded-full text-xs font-bold text-[#751485] mb-3 border border-[#751485]/20">
+          <span className="w-2 h-2 rounded-full bg-[#751485]" />
+          <span>CU Convenience Store Digital UI System</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#1E1E1E] tracking-tight">
+          CU Component Library & Specs
         </h1>
-        <p className="text-sm sm:text-base text-[#786B65] mt-2 max-w-3xl leading-relaxed">
-          The complete architectural system. Squircles, asymmetric continuous curvature, marshmallow depth, and morning bakery warmth designed to feel like tactile wooden and clay objects.
+        <p className="text-sm sm:text-base text-gray-600 mt-2 max-w-3xl leading-relaxed">
+          The complete component architecture for NICE TO CU (BGF Retail). Built on high-contrast retail colors, 1+1 / 2+1 promotion badges, 1:1 square product framing, POS real-time stock indicators, and centered modal overlays with backdrop dismissals.
         </p>
       </div>
 
-      {/* 1. Shape Language: Squircles & Asymmetric Cards */}
+      {/* 1. Promotional Badge System */}
       <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
+        <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-[#FF8A50] uppercase tracking-wider">01. Geometry</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              Squircles & Asymmetric Accent Cards
+            <span className="text-xs font-bold text-[#751485] uppercase tracking-wider">01. Promotion System</span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#1E1E1E]">
+              Promotional Badges (`CUBadge`)
             </h2>
           </div>
-          <PebbleBadge color="clementine" doodle="sparkle">Continuous Curvature</PebbleBadge>
+          <span className="text-xs font-bold text-[#37D243] bg-[#EBFCEB] px-3 py-1 rounded-full border border-[#37D243]/30">
+            Korean Retail Standard
+          </span>
         </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          Standard 12px radii look robotic. Pebble & Sunbeam adopts continuous superellipses and diagonal corner asymmetry (Top-Left: 28px, Top-Right: 18px, Bottom-Right: 28px, Bottom-Left: 14px) mimicking hand-sanded sea pebbles and paper cutouts.
+        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-3xl">
+          CU's signature promotional badges are the focal point of the convenience store shopping experience. They feature distinct color identities to help shoppers recognize deals at a glance.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-          {/* Card 1: Primary Asymmetric */}
-          <PebbleCard geometry="asymmetric" padded="md" className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#FF8A50]">Primary Diagonal Asymmetry</span>
-              <span className="text-[11px] font-mono text-[#786B65]">28 / 18 / 28 / 14</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+          {badgeShowcase.map((b) => (
+            <div
+              key={b.type}
+              className="bg-white rounded-[18px] p-4 border border-gray-200 shadow-2xs flex flex-col justify-between space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <CUBadge type={b.type} size="md" />
+                <span className="font-mono text-[10px] text-gray-400 font-bold">{b.type}</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-sm text-[#1E1E1E]">{b.label}</h4>
+                <p className="text-xs text-gray-500 mt-1 leading-normal">{b.desc}</p>
+              </div>
+              <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                <span className="text-[10px] text-gray-400 font-medium">Sizes:</span>
+                <CUBadge type={b.type} size="sm" />
+                <CUBadge type={b.type} size="md" />
+                <CUBadge type={b.type} size="lg" />
+              </div>
             </div>
-            <h3 className="font-display font-bold text-lg text-[#2D2522]">Hand-Sanded Sea Pebble</h3>
-            <p className="text-xs text-[#786B65]">
-              Subtle diagonal differences trigger the playful, handcrafted impression of clay tiles without breaking layout alignment.
-            </p>
-            <div className="pt-2">
-              <PebbleBadge color="rice">Subtle Playfulness</PebbleBadge>
-            </div>
-          </PebbleCard>
-
-          {/* Card 2: Alt Asymmetric */}
-          <PebbleCard geometry="asymmetric-alt" padded="md" className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#5BB98C]">Inverse Asymmetry</span>
-              <span className="text-[11px] font-mono text-[#786B65]">18 / 28 / 14 / 28</span>
-            </div>
-            <h3 className="font-display font-bold text-lg text-[#2D2522]">Balanced Mirroring</h3>
-            <p className="text-xs text-[#786B65]">
-              Provides rhythm across adjacent grid columns so cards do not feel like robotic identical clones.
-            </p>
-            <div className="pt-2">
-              <PebbleBadge color="matcha">Rhythmic Flow</PebbleBadge>
-            </div>
-          </PebbleCard>
-
-          {/* Card 3: Deep Plump Squircle */}
-          <PebbleCard geometry="squircle-lg" padded="md" className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#8C7CFF]">Continuous Squircle</span>
-              <span className="text-[11px] font-mono text-[#786B65]">28px Continuous</span>
-            </div>
-            <h3 className="font-display font-bold text-lg text-[#2D2522]">Soft Molded Clay</h3>
-            <p className="text-xs text-[#786B65]">
-              Rounded without abrupt tangent transitions, framing content with peaceful tactile warmth.
-            </p>
-            <div className="pt-2">
-              <PebbleBadge color="berry">Calm & Cozy</PebbleBadge>
-            </div>
-          </PebbleCard>
+          ))}
         </div>
       </section>
 
-      {/* 2. Marshmallow Buttons & Tactile Offsets */}
+      {/* 2. Retail Product Card System */}
       <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
+        <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-[#FF8A50] uppercase tracking-wider">02. Controls</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              Volumetric "Marshmallow" Buttons
+            <span className="text-xs font-bold text-[#751485] uppercase tracking-wider">02. Catalog Anatomy</span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#1E1E1E]">
+              Retail Product Card (`CUProductCard`)
             </h2>
           </div>
-          <PebbleBadge color="clementine" doodle="ring">Pseudo-3D Offset</PebbleBadge>
+          <span className="text-xs font-bold text-[#751485] bg-[#F6EDF8] px-3 py-1 rounded-full border border-[#751485]/20">
+            Uniform 1:1 Aspect Ratio
+          </span>
         </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          Buttons avoid harsh black drop shadows. They feature a soft, tinted lower-edge ridge (2px to 4px pseudo-3D offset) and a signature Squish & Release animation (<code className="text-[#2D2522]">scale(0.94)</code> on press, <code className="text-[#2D2522]">scale(1.03)</code> rebound on release).
+        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-3xl">
+          Matches CU's official <code className="text-[#751485] font-bold">.prod_item</code> DOM hierarchy. Employs uniform 1:1 square image containers with inner border containment, two-line clamped product typography, live stock indicators, and dual action triggers.
         </p>
 
-        <PebbleCard geometry="asymmetric" padded="lg" className="space-y-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <PebbleButton variant="clementine" size="md">Clementine Pop</PebbleButton>
-            <PebbleButton variant="matcha" size="md">Matcha Leaf</PebbleButton>
-            <PebbleButton variant="berry" size="md">Berry Cream</PebbleButton>
-            <PebbleButton variant="butter" size="md">Sweet Butter</PebbleButton>
-            <PebbleButton variant="coral" size="md">Spiced Coral</PebbleButton>
-            <PebbleButton variant="chalk" size="md" disabled tooltipNotice="Resting until unlocked">
-              Chalk & Slumber
-            </PebbleButton>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          {/* Card 1: 1+1 Standard Card */}
+          <CUProductCard
+            product={CU_SAMPLE_PRODUCTS[3]} // get Coffee 1+1
+            onSelect={(p) => setDetailProduct(p)}
+            onAddToCart={() => setCartModalOpen(true)}
+            onCheckStock={(p) => setStockProduct(p)}
+          />
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#F0EAE1]">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-[#2D2522]">Small (min 40px)</span>
-              <p className="text-xs text-[#786B65]">Compact badges & toolbars</p>
-              <div className="pt-1">
-                <PebbleButton variant="clementine" size="sm">Small Action</PebbleButton>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-[#2D2522]">Medium (min 46px)</span>
-              <p className="text-xs text-[#786B65]">Standard primary controls</p>
-              <div className="pt-1">
-                <PebbleButton variant="matcha" size="md">Medium Action</PebbleButton>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-[#2D2522]">Large (min 52px)</span>
-              <p className="text-xs text-[#786B65]">Hero & checkout CTAs</p>
-              <div className="pt-1">
-                <PebbleButton variant="berry" size="lg">Hero Action</PebbleButton>
-              </div>
-            </div>
-          </div>
-        </PebbleCard>
-      </section>
+          {/* Card 2: 2+1 Viral Bread */}
+          <CUProductCard
+            product={CU_SAMPLE_PRODUCTS[0]} // Yonsei bread 2+1
+            onSelect={(p) => setDetailProduct(p)}
+            onAddToCart={() => setCartModalOpen(true)}
+            onCheckStock={(p) => setStockProduct(p)}
+          />
 
-      {/* 3. Input Bars & Scooped Trenches */}
-      <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#EE5D50] uppercase tracking-wider">03. Fields</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              Soft Scooped Trench Inputs
-            </h2>
-          </div>
-          <PebbleBadge color="coral" doodle="dot">Gentle Shiver</PebbleBadge>
-        </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          Deep 20px squircle radius with a warm slightly darker cream background (#F0EAE1 Steamed Rice) gently pressed into the surface like a shallow pocket. Validation errors trigger a rapid, elastic jelly shiver (3 shakes over 250ms with ±1.5° rotation) rather than an aggressive red flash.
-        </p>
+          {/* Card 3: NEW Hot Meal */}
+          <CUProductCard
+            product={CU_SAMPLE_PRODUCTS[1]} // Dubai chocolate
+            onSelect={(p) => setDetailProduct(p)}
+            onAddToCart={() => setCartModalOpen(true)}
+            onCheckStock={(p) => setStockProduct(p)}
+          />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <PebbleCard geometry="squircle" padded="md" className="space-y-4">
-            <h4 className="font-display font-bold text-sm text-[#2D2522]">Resting & Focused Trench</h4>
-            <PebbleInput
-              label="Recipient Name"
-              placeholder="e.g. Clara Meadowbrook"
-              helperText="Inset shadow creates a physical pocket depth"
-              defaultValue="Clara Meadowbrook"
-            />
-            <PebbleInput
-              label="Morning Pickup Note"
-              placeholder="Leave beside bakery door..."
-              defaultValue="Please slice into 12 slices"
-            />
-          </PebbleCard>
-
-          <PebbleCard geometry="squircle" padded="md" className="space-y-4">
-            <h4 className="font-display font-bold text-sm text-[#2D2522]">Validation Shiver State</h4>
-            <PebbleInput
-              label="Postal Code (Validation Test)"
-              defaultValue="ABC"
-              error="Postal code must be 5 digits (e.g. 94102)"
-              triggerShiver={true}
-            />
-            <div className="p-3 bg-[#FDF2F0] rounded-[16px] border border-[#EE5D50]/30 text-xs text-[#786B65]">
-              <strong className="text-[#EE5D50]">Playful Shiver:</strong> Notice the gentle ±1.5° rotation and soft coral border bloom guiding the user like a patient friend.
-            </div>
-          </PebbleCard>
+          {/* Card 4: Out of Stock Card */}
+          <CUProductCard
+            product={{
+              ...CU_SAMPLE_PRODUCTS[5],
+              stockCount: 0,
+            }}
+            onSelect={(p) => setDetailProduct(p)}
+            onAddToCart={() => setCartModalOpen(true)}
+            onCheckStock={(p) => setStockProduct(p)}
+          />
         </div>
       </section>
 
-      {/* 4. Wobble Bloom Toggles & Checkboxes */}
+      {/* 3. Centered Popup Modals & Overlays */}
       <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
+        <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-[#5BB98C] uppercase tracking-wider">04. Switches</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              "Wobble Bloom" Toggles & Checkboxes
+            <span className="text-xs font-bold text-[#751485] uppercase tracking-wider">03. Overlays & Dialogs</span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#1E1E1E]">
+              Centered Pop-up Modals & Dismissal Architecture
             </h2>
           </div>
-          <PebbleBadge color="matcha" doodle="sparkle">Tactile Elasticity</PebbleBadge>
+          <span className="text-xs font-bold text-[#37D243] bg-[#EBFCEB] px-3 py-1 rounded-full border border-[#37D243]/30">
+            Backdrop & Esc Dismissal
+          </span>
         </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          Cause-and-effect in physical objects: toggles stretch horizontally on transition (<code className="text-[#2D2522]">scaleX(1.2)</code>) before blooming into a circle with an energetic jiggle. Checkboxes bloom with a bouncy matcha checkmark.
+        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-3xl">
+          All modal dialogs are centered in the viewport with high-contrast backdrop overlays. Clicking anywhere outside the dialog window or pressing the <kbd className="px-1.5 py-0.5 bg-gray-100 border rounded text-[11px] font-mono">Esc</kbd> key immediately dismisses the modal.
         </p>
 
-        <PebbleCard geometry="asymmetric" padded="lg">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h4 className="font-display font-bold text-sm text-[#2D2522]">Wobble Bloom Switches</h4>
-              <div className="space-y-3">
-                <PebbleToggle
-                  checked={toggle1}
-                  onChange={setToggle1}
-                  color="matcha"
-                  label="Artisan Sourdough Starter"
-                  description="Feed daily with warm spring water"
-                />
-                <PebbleToggle
-                  checked={toggle2}
-                  onChange={setToggle2}
-                  color="clementine"
-                  label="Golden Sunbeam Toasting"
-                  description="Double baked for crisp crust"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-display font-bold text-sm text-[#2D2522]">Squircle Checkboxes</h4>
-              <div className="space-y-3">
-                <PebbleCheckbox
-                  checked={check1}
-                  onChange={setCheck1}
-                  color="matcha"
-                  label="Biodegradable Beeswax Wrap"
-                  subtext="Keeps moisture sealed for 5 days"
-                />
-                <PebbleCheckbox
-                  checked={check2}
-                  onChange={setCheck2}
-                  color="berry"
-                  label="Pantry Recipe Cards"
-                  subtext="Includes morning brioche secrets"
-                />
-              </div>
-            </div>
-          </div>
-        </PebbleCard>
-      </section>
-
-      {/* 5. Modals, Sheets & Floating Trays */}
-      <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#8C7CFF] uppercase tracking-wider">05. Overlays</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              "Golden Dim" Modals & Pebble Notches
-            </h2>
-          </div>
-          <PebbleBadge color="berry">Cozy Lunchbox</PebbleBadge>
-        </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          Backdrop uses warm cocoa tint (<code className="text-[#2D2522]">rgba(45,37,34,0.35)</code>) with heavy blur. Desktop modals float as plump 36px squircles; mobile views transform into bottom sheets with an indented pebble notch carved into the rim.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <PebbleCard geometry="squircle" padded="md" className="space-y-4">
-            <h4 className="font-display font-bold text-sm text-[#2D2522]">Interactive Modal Dialog</h4>
-            <p className="text-xs text-[#786B65]">
-              Arrives with slight anticipation recoil: popping in at scale(0.92) and springing up with cheerful overshoot.
-            </p>
-            <PebbleButton variant="clementine" size="md" onClick={() => setModalOpen(true)}>
-              Launch Golden Dim Modal
-            </PebbleButton>
-          </PebbleCard>
-
-          <PebbleCard geometry="squircle" padded="md" className="space-y-4">
-            <h4 className="font-display font-bold text-sm text-[#2D2522]">Floating Dropdown Tray</h4>
-            <p className="text-xs text-[#786B65]">
-              Detached 8px floating gap, internal confectionery spacing, and 180° backflipping chevron.
-            </p>
-            <PebbleDropdown
-              value={dropdownVal}
-              onChange={setDropdownVal}
-              options={[
-                { value: 'tea', label: 'Herbal Mint Tea', hint: 'Matcha infusion' },
-                { value: 'coffee', label: 'Dark Truffle Roast', hint: 'Espresso blend' },
-                { value: 'milk', label: 'Oat Milk Pitcher', hint: 'Steamed warm' },
-              ]}
-            />
-          </PebbleCard>
-        </div>
-      </section>
-
-      {/* 6. Progress & Loading: Breathing Pebble & Squishy Dough Drop */}
-      <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#F5A623] uppercase tracking-wider">06. Motion States</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              Loading: Breathing Pebble & Dough Drop
-            </h2>
-          </div>
-          <PebbleBadge color="honeycomb" doodle="ring">1.8s Pulse</PebbleBadge>
-        </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          No sterile grey spinners. Waiting feels rhythmic and relaxing, like baking dough or watching ripples in a puddle.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Squishy Dough Drop */}
-          <PebbleCard geometry="asymmetric" padded="md" className="flex flex-col items-center justify-center text-center space-y-3">
-            <span className="text-xs font-bold text-[#FF8A50]">Squishy Dough Drop</span>
-            <PebbleSpinner size="lg" color="clementine" />
-            <p className="text-xs text-[#786B65]">
-              Compresses on floor contact (<code className="text-[#2D2522]">scale(1.2, 0.8)</code>), then shoots up elongated (<code className="text-[#2D2522]">scale(0.85, 1.15)</code>).
-            </p>
-          </PebbleCard>
-
-          {/* Breathing Pebble Skeleton */}
-          <PebbleCard geometry="asymmetric-alt" padded="md" className="space-y-3">
-            <span className="text-xs font-bold text-[#5BB98C]">Breathing Pebble Skeleton</span>
-            <div className="space-y-2 pt-2">
-              <PebbleSkeleton variant="badge" />
-              <PebbleSkeleton variant="title" />
-              <PebbleSkeleton variant="text" />
-              <PebbleSkeleton variant="text" width="80%" />
-            </div>
-            <p className="text-xs text-[#786B65] pt-2">
-              Steamed Rice squircle placeholder with warm buttery sunbeam sweep across a 1.8s breathing cycle.
-            </p>
-          </PebbleCard>
-
-          {/* Dugout Track Progress */}
-          <PebbleCard geometry="squircle" padded="md" className="space-y-4 flex flex-col justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          {/* Modal Trigger 1: Product Details */}
+          <div className="bg-white p-5 rounded-[20px] border border-gray-200 shadow-2xs flex flex-col justify-between space-y-4">
             <div>
-              <span className="text-xs font-bold text-[#8C7CFF]">Dugout Progress Track</span>
-              <p className="text-xs text-[#786B65] mt-1 mb-4">
-                Height: 12px, border-radius: 999px, candy-striping, trailing glow bead.
+              <div className="text-2xl mb-1">🔍</div>
+              <h4 className="font-bold text-sm text-[#1E1E1E]">Product Detail Pop-up</h4>
+              <p className="text-xs text-gray-500 mt-1">
+                Microwave guide, storage temperature, nutrition facts, and O4O services.
               </p>
-              <PebbleProgressBar progress={72} label="Proving Chamber" color="clementine" />
-              <div className="mt-3">
-                <PebbleProgressBar progress={45} label="Oven Heat" color="matcha" />
-              </div>
             </div>
-            <PebbleBadge color="rice">Continuous Feedback</PebbleBadge>
-          </PebbleCard>
+            <button
+              type="button"
+              onClick={() => setDetailProduct(CU_SAMPLE_PRODUCTS[0])}
+              className="w-full py-2.5 px-3 bg-[#751485] hover:bg-[#580F63] text-white text-xs font-bold rounded-[12px] transition-all cursor-pointer shadow-xs"
+            >
+              Open Product Modal
+            </button>
+          </div>
+
+          {/* Modal Trigger 2: Stock Lookup */}
+          <div className="bg-white p-5 rounded-[20px] border border-gray-200 shadow-2xs flex flex-col justify-between space-y-4">
+            <div>
+              <div className="text-2xl mb-1">🗺️</div>
+              <h4 className="font-bold text-sm text-[#1E1E1E]">Store Stock Lookup Pop-up</h4>
+              <p className="text-xs text-gray-500 mt-1">
+                Real-time POS connected inventory across nearby branches with distance indicators.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStockProduct(CU_SAMPLE_PRODUCTS[0])}
+              className="w-full py-2.5 px-3 bg-[#37D243] hover:bg-[#2BB836] text-white text-xs font-bold rounded-[12px] transition-all cursor-pointer shadow-xs"
+            >
+              Open Stock Modal
+            </button>
+          </div>
+
+          {/* Modal Trigger 3: One-QR Barcode */}
+          <div className="bg-white p-5 rounded-[20px] border border-gray-200 shadow-2xs flex flex-col justify-between space-y-4">
+            <div>
+              <div className="text-2xl mb-1">📱</div>
+              <h4 className="font-bold text-sm text-[#1E1E1E]">Pocket CU One-QR Modal</h4>
+              <p className="text-xs text-gray-500 mt-1">
+                Single dynamic barcode for payment + CU points + discounts + virtual Keeping Box.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOneQROpen(true)}
+              className="w-full py-2.5 px-3 bg-[#8059EA] hover:bg-[#6837F8] text-white text-xs font-bold rounded-[12px] transition-all cursor-pointer shadow-xs"
+            >
+              Open One-QR Modal
+            </button>
+          </div>
+
+          {/* Modal Trigger 4: Centered Cart Pop-up */}
+          <div className="bg-white p-5 rounded-[20px] border border-gray-200 shadow-2xs flex flex-col justify-between space-y-4">
+            <div>
+              <div className="text-2xl mb-1">🛒</div>
+              <h4 className="font-bold text-sm text-[#1E1E1E]">Centered Cart Pop-up</h4>
+              <p className="text-xs text-gray-500 mt-1">
+                Quick pickup order modal with quantity steppers and promotional discount calculations.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCartModalOpen(true)}
+              className="w-full py-2.5 px-3 bg-[#1E1E1E] hover:bg-black text-white text-xs font-bold rounded-[12px] transition-all cursor-pointer shadow-xs"
+            >
+              Open Cart Modal
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* 7. Error, Warning, Success & Notice Callouts */}
+      {/* 4. O4O Service Indicators & Facility Badges */}
       <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
+        <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-[#EE5D50] uppercase tracking-wider">07. Feedback</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              Gentle Guidance & Notice Badges
+            <span className="text-xs font-bold text-[#751485] uppercase tracking-wider">04. Store Services</span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#1E1E1E]">
+              O4O (Online-for-Offline) Facility Badges
             </h2>
           </div>
-          <PebbleBadge color="coral" doodle="sparkle">Gentle Colors</PebbleBadge>
+          <span className="text-xs font-bold text-[#8059EA] bg-[#F2EFFD] px-3 py-1 rounded-full border border-[#8059EA]/30">
+            Connected Retail
+          </span>
         </div>
-        <p className="text-xs sm:text-sm text-[#786B65] leading-relaxed max-w-3xl">
-          Never shout in violent #FF0000. Errors guide gently like an observant friend. Uses Wild Persimmon / Spiced Coral (#EE5D50), Honeycomb Yellow (#F5A623), and Matcha Leaf (#5BB98C) with friendly hand-drawn iconography.
+        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-3xl">
+          Visual indicator chips for physical convenience store amenities displayed in store locator cards and product detail views.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <PebbleCallout
-            variant="coral"
-            title="Slight Temperature Dip"
-            description="The oven door was opened during preheat. Add 3 minutes to fermentation time."
-          />
-          <PebbleCallout
-            variant="honeycomb"
-            title="Fresh Batch in 15 Minutes"
-            description="Country sourdough is browning nicely. You will receive a warm bakery chime."
-          />
-          <PebbleCallout
-            variant="matcha"
-            title="Golden Loaf Perfected"
-            description="Crust reached optimal caramelization. Crumb is airy and tender."
-          />
-        </div>
-      </section>
-
-      {/* 8. Paper Note Tooltips & Clean Canvas Empty States */}
-      <section className="space-y-4">
-        <div className="border-b border-[#EADBCE]/80 pb-3 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#786B65] uppercase tracking-wider">08. Finishing Touches</span>
-            <h2 className="font-display text-2xl font-bold text-[#2D2522]">
-              "Paper Notes" & "Clean Canvas"
-            </h2>
-          </div>
-          <PebbleBadge color="rice">Micro Polish</PebbleBadge>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <PebbleCard geometry="squircle" padded="lg" className="space-y-6 text-center">
-            <span className="text-xs font-bold text-[#786B65] uppercase tracking-wide">
-              Paper Note Tooltips
-            </span>
-            <p className="text-xs text-[#786B65] max-w-xs mx-auto">
-              Teeny floating speech pills with a soft triangular beak and Dark Truffle background inflating like a tiny bubble.
-            </p>
-
-            <div className="flex justify-center gap-4 py-4">
-              <PebbleTooltip content="Harvested at sunrise">
-                <PebbleButton variant="butter" size="sm">Hover for Paper Note</PebbleButton>
-              </PebbleTooltip>
-
-              <PebbleTooltip content="Milled from whole spelt">
-                <PebbleButton variant="matcha" size="sm">Flour Heritage</PebbleButton>
-              </PebbleTooltip>
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-2">
+          {[
+            { icon: '🕒', label: '24 Hours', desc: 'Open 24/7' },
+            { icon: '🛍️', label: 'Quick Pickup', desc: 'Ready in 10m' },
+            { icon: '📦', label: 'Parcel Locker', desc: 'Send & Receive' },
+            { icon: '🥐', label: 'Fresh Bakery', desc: 'Baked in-store' },
+            { icon: '🍗', label: 'Fried Chicken', desc: 'Hot counter' },
+            { icon: '🏧', label: 'Global ATM', desc: 'Cash withdraw' },
+            { icon: '💊', label: 'OTC Medicine', desc: 'Safety medicine' },
+          ].map((svc) => (
+            <div
+              key={svc.label}
+              className="bg-white p-3 rounded-[16px] border border-gray-200 text-center shadow-2xs space-y-1"
+            >
+              <div className="text-xl">{svc.icon}</div>
+              <div className="text-xs font-bold text-[#1E1E1E]">{svc.label}</div>
+              <div className="text-[10px] text-gray-400">{svc.desc}</div>
             </div>
-          </PebbleCard>
-
-          <PebbleEmptyState
-            title="A Quiet Corner..."
-            description="All morning orders are tucked away in their linen baskets. Nothing left to do but watch the sunbeam dance."
-            actionText="Bake New Batch"
-            onAction={() => alert('New artisan batch prepared!')}
-          />
+          ))}
         </div>
       </section>
 
-      {/* Modal Dialog Instance */}
-      <PebbleModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Pebble & Sunbeam Modal"
-        subtitle="36px continuous squircle with Golden Dim cocoa blur"
-        footer={
-          <PebbleButton variant="clementine" size="sm" onClick={() => setModalOpen(false)}>
-            Close Modal
-          </PebbleButton>
-        }
-      >
-        <p className="text-sm text-[#786B65] leading-relaxed">
-          This modal demonstrates the Tender Craft spatial atmosphere. The 2px semi-translucent warm border <code className="text-[#2D2522]">rgba(255,255,255,0.6)</code> captures morning ambient light, and the cocoa dim keeps the room feeling welcoming.
-        </p>
-      </PebbleModal>
+      {/* Modals Instances */}
+      <CUProductDetailModal
+        product={detailProduct}
+        isOpen={!!detailProduct}
+        onClose={() => setDetailProduct(null)}
+        onAddToCart={() => setCartModalOpen(true)}
+        onOpenStockChecker={(p) => {
+          setDetailProduct(null);
+          setStockProduct(p);
+        }}
+      />
+
+      <CUStockModal
+        product={stockProduct}
+        isOpen={!!stockProduct}
+        onClose={() => setStockProduct(null)}
+      />
+
+      <CUOneQRModal
+        isOpen={oneQROpen}
+        onClose={() => setOneQROpen(false)}
+      />
+
+      <CUCartModal
+        isOpen={cartModalOpen}
+        onClose={() => setCartModalOpen(false)}
+        items={cartItems}
+        onUpdateQuantity={handleUpdateQuantity}
+        onCheckout={() => {
+          alert('Quick Pickup Order Confirmed!');
+          setCartModalOpen(false);
+        }}
+      />
     </div>
   );
 };

@@ -1,472 +1,340 @@
 import React, { useState } from 'react';
 import {
-  PebbleButton,
-  PebbleButtonVariant,
-  PebbleButtonSize,
-  PebbleCard,
-  PebbleInput,
-  PebbleToggle,
-  PebbleCheckbox,
-  PebbleModal,
-  PebbleDropdown,
-  PebbleProgressBar,
-  PebbleSkeleton,
-  PebbleSpinner,
-  PebbleCallout,
-  PebbleTooltip,
-  PebbleBadge,
-  playSliderTick,
-  playMarshmallowSquish,
+  CUProductCard,
+  CUBadgeType,
+  CUProductItem,
+  CUProductDetailModal,
+  CUOneQRModal,
+  CUStockModal,
+  playMatchaChime,
+  playStepperClick,
 } from '../design-system';
+import { CUCartModal, CartItem } from '../design-system/components/CUCartModal';
 import confetti from 'canvas-confetti';
 
 export const PlaygroundView: React.FC = () => {
-  // Playground state knobs
-  const [btnVariant, setBtnVariant] = useState<PebbleButtonVariant>('clementine');
-  const [btnSize, setBtnSize] = useState<PebbleButtonSize>('md');
-  const [btnDisabled, setBtnDisabled] = useState(false);
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [btnText, setBtnText] = useState('Fresh Sourdough');
+  // Configurable Product Knobs
+  const [name, setName] = useState('Yonsei Fresh Milk Cream Bread');
+  const [price, setPrice] = useState(2900);
+  const [badge, setBadge] = useState<CUBadgeType | 'none'>('plus2');
+  const [secondaryTag, setSecondaryTag] = useState<CUBadgeType | 'none'>('cuOnly');
+  const [categoryLabel, setCategoryLabel] = useState('Dessert / Bakery');
+  const [stockCount, setStockCount] = useState(6);
+  const [storageType, setStorageType] = useState<'Chilled' | 'Frozen' | 'Room Temp'>('Chilled');
+  const [microwaveTime, setMicrowaveTime] = useState('1000W 20s / 700W 30s');
+  const [calories, setCalories] = useState('413 kcal');
+  const [description, setDescription] = useState(
+    'Over 80% whipped fresh milk cream by weight! The viral TikTok and Instagram convenience store sensation.'
+  );
 
-  // Input state
-  const [inputValue, setInputValue] = useState('Morning Cinnamon Brioche');
-  const [inputError, setInputError] = useState('');
-  const [shiverCount, setShiverCount] = useState(0);
+  // Modals
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [stockOpen, setStockOpen] = useState(false);
+  const [oneQROpen, setOneQROpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
-  // Toggle & Checkbox
-  const [toggleVal, setToggleVal] = useState(true);
-  const [toggleColor, setToggleColor] = useState<'matcha' | 'clementine' | 'berry'>('matcha');
-  const [checkVal1, setCheckVal1] = useState(true);
-  const [checkVal2, setCheckVal2] = useState(false);
+  // Cart
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Dropdown
-  const [dropdownVal, setDropdownVal] = useState('brioche');
+  // Derived Product Object
+  const configuredProduct: CUProductItem = {
+    id: 'playground-preview-item',
+    name,
+    price,
+    originalPrice: Math.round(price * 1.15),
+    imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=600&auto=format&fit=crop&q=80',
+    category: 'snacks_dessert',
+    categoryLabel,
+    badge: badge === 'none' ? undefined : badge,
+    secondaryTag: secondaryTag === 'none' ? undefined : secondaryTag,
+    description,
+    storageType,
+    microwaveTime,
+    stockCount,
+    calories,
+    tags: ['CUPlayground', 'LivePreview', 'BGFRetail'],
+  };
 
-  // Progress Bar
-  const [progressVal, setProgressVal] = useState(68);
-
-  // Modal
-  const [modalOpen, setModalOpen] = useState(false);
-
-  // Celebrate
-  const triggerCelebration = () => {
-    confetti({
-      particleCount: 50,
-      spread: 60,
-      origin: { y: 0.7 },
-      colors: ['#FF8A50', '#5BB98C', '#8C7CFF', '#F5A623', '#FAF7F2'],
-    });
+  const handleAddToCart = () => {
+    playMatchaChime();
+    setCartItems([{ product: configuredProduct, quantity: 1 }]);
+    setCartOpen(true);
   };
 
   return (
-    <div className="space-y-8 pb-16">
-      {/* Playground Header Banner */}
-      <div className="bg-[#FFFDF9] border border-[#EADBCE]/70 rounded-[28px] p-6 sm:p-8 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 mb-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF8A50] animate-ping" />
-              <span className="text-xs font-bold uppercase tracking-wider text-[#FF8A50]">
-                Interactive Sandbox
+    <div className="space-y-10 pb-24 font-['Noto_Sans_KR',sans-serif]">
+      {/* Intro Header */}
+      <div className="bg-white border border-[#E5E7EB] rounded-[24px] p-6 sm:p-10 shadow-xs">
+        <div className="inline-flex items-center gap-2 bg-[#F6EDF8] px-3 py-1 rounded-full text-xs font-bold text-[#751485] mb-3 border border-[#751485]/20">
+          <span className="w-2 h-2 rounded-full bg-[#751485]" />
+          <span>Interactive Testing Studio</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#1E1E1E] tracking-tight">
+          CU Product & Promotion Studio
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-2 max-w-3xl leading-relaxed">
+          Tweak product parameters in real time and test promotional savings, out-of-stock states, centered modal popups, and Pocket CU checkout workflows.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left: Interactive Controls Panel (7 Cols) */}
+        <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-[24px] border border-gray-200 shadow-xs space-y-6">
+          <h2 className="text-lg font-black text-[#1E1E1E] border-b border-gray-100 pb-3 flex items-center justify-between">
+            <span>Product Configuration Knobs</span>
+            <span className="text-xs font-bold text-[#751485] bg-[#F6EDF8] px-2.5 py-0.5 rounded-full">
+              Live Updates
+            </span>
+          </h2>
+
+          <div className="space-y-4">
+            {/* Product Name */}
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                Product Title / Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-[12px] text-xs sm:text-sm font-medium focus:outline-none focus:border-[#751485] focus:bg-white transition-all"
+              />
+            </div>
+
+            {/* Price & Stock Count */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                  Retail Price (₩ KRW): <span className="text-[#751485] font-black">₩{price.toLocaleString()}</span>
+                </label>
+                <input
+                  type="range"
+                  min="500"
+                  max="20000"
+                  step="100"
+                  value={price}
+                  onChange={(e) => {
+                    playStepperClick();
+                    setPrice(Number(e.target.value));
+                  }}
+                  className="w-full accent-[#751485] cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                  Stock Units: <span className={`font-black ${stockCount === 0 ? 'text-red-500' : 'text-[#37D243]'}`}>{stockCount} ({stockCount === 0 ? 'Out of Stock' : stockCount <= 3 ? 'Low Stock' : 'In Stock'})</span>
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="30"
+                  value={stockCount}
+                  onChange={(e) => {
+                    playStepperClick();
+                    setStockCount(Number(e.target.value));
+                  }}
+                  className="w-full accent-[#751485] cursor-pointer"
+                />
+              </div>
+            </div>
+
+            {/* Promotion Badges */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-gray-700">
+                Primary Promotion Badge
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {(['none', 'plus1', 'plus2', 'new', 'best', 'cuOnly', 'sale', 'hot'] as (CUBadgeType | 'none')[]).map((b) => (
+                  <button
+                    key={b}
+                    type="button"
+                    onClick={() => setBadge(b)}
+                    className={`px-3 py-1.5 rounded-[10px] text-xs font-bold border transition-all cursor-pointer ${
+                      badge === b
+                        ? 'bg-[#751485] text-white border-[#751485] shadow-xs'
+                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-400'
+                    }`}
+                  >
+                    {b === 'none' ? 'None' : b === 'plus1' ? '1+1' : b === 'plus2' ? '2+1' : b.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Status Tag */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-gray-700">
+                Secondary Status Tag
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {(['none', 'new', 'best', 'cuOnly'] as (CUBadgeType | 'none')[]).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setSecondaryTag(t)}
+                    className={`px-3 py-1.5 rounded-[10px] text-xs font-bold border transition-all cursor-pointer ${
+                      secondaryTag === t
+                        ? 'bg-[#1E1E1E] text-white border-[#1E1E1E] shadow-xs'
+                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-400'
+                    }`}
+                  >
+                    {t === 'none' ? 'None' : t.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Storage Type */}
+            <div className="grid grid-cols-3 gap-3">
+              {(['Chilled', 'Frozen', 'Room Temp'] as ('Chilled' | 'Frozen' | 'Room Temp')[]).map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setStorageType(st)}
+                  className={`py-2 px-3 rounded-[12px] text-xs font-bold border transition-all cursor-pointer ${
+                    storageType === st
+                      ? 'bg-[#F6EDF8] text-[#751485] border-[#751485]'
+                      : 'bg-white border-gray-200 text-gray-600'
+                  }`}
+                >
+                  {st === 'Chilled' ? '❄️ Chilled' : st === 'Frozen' ? '🧊 Frozen' : '📦 Room Temp'}
+                </button>
+              ))}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                Product Description
+              </label>
+              <textarea
+                rows={2}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-[12px] text-xs font-medium focus:outline-none focus:border-[#751485] focus:bg-white transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Live Preview & Action Deck (5 Cols) */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="bg-white p-6 rounded-[24px] border border-gray-200 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Live Card Render
+              </span>
+              <span className="text-xs font-black text-[#37D243]">
+                {stockCount > 0 ? 'Ready for Purchase' : 'Sold Out State'}
               </span>
             </div>
-            <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-[#2D2522] tracking-tight">
-              Pebble & Sunbeam Playground
-            </h1>
-            <p className="text-xs sm:text-sm text-[#786B65] mt-1.5 max-w-2xl leading-relaxed">
-              Tender Craft in motion: tap, squish, shiver, and toggle. Experience how continuous squircles, volumetric marshmallow offsets, and jelly easing banish digital glare.
+
+            {/* The Live Rendered Card */}
+            <div className="max-w-[280px] mx-auto">
+              <CUProductCard
+                product={configuredProduct}
+                onSelect={() => setDetailOpen(true)}
+                onAddToCart={handleAddToCart}
+                onCheckStock={() => setStockOpen(true)}
+              />
+            </div>
+
+            <p className="text-[11px] text-gray-400 text-center">
+              Click the card to open Product Detail Pop-up, or click Stock / Add buttons.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <PebbleButton
-              variant="matcha"
-              size="md"
-              onClick={triggerCelebration}
-              icon={
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 2l2.4 6.6 6.6 2.4-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z"/>
-                </svg>
-              }
-            >
-              Test Matcha Confetti
-            </PebbleButton>
-          </div>
-        </div>
-      </div>
+          {/* Quick Modal Launcher Shortcuts */}
+          <div className="bg-white p-5 rounded-[20px] border border-gray-200 shadow-xs space-y-3">
+            <span className="text-xs font-bold text-[#1E1E1E] block">
+              Quick Modal Test Deck
+            </span>
 
-      {/* Main Grid: Live Controls & Preview Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Interactive Controls & Property Knobs (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          <PebbleCard geometry="asymmetric" padded="md" className="space-y-6">
-            <div className="border-b border-[#F0EAE1] pb-3">
-              <h3 className="font-display font-bold text-base text-[#2D2522]">
-                Interactive Knobs & States
-              </h3>
-              <p className="text-xs text-[#786B65]">Tweak properties to observe organic micro-interactions</p>
-            </div>
-
-            {/* Button Knobs */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#786B65]">
-                Button Variant
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['clementine', 'matcha', 'berry', 'butter', 'coral', 'chalk'] as PebbleButtonVariant[]).map((v) => (
-                  <button
-                    key={v}
-                    onClick={() => setBtnVariant(v)}
-                    className={`
-                      px-2.5 py-1.5 rounded-[12px] text-xs font-bold capitalize transition-all border
-                      ${btnVariant === v
-                        ? 'bg-[#2D2522] text-[#FAF7F2] border-[#2D2522] shadow-sm'
-                        : 'bg-[#F0EAE1] text-[#786B65] border-[#E2D8CC] hover:text-[#2D2522]'
-                      }
-                    `}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Size Knobs */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#786B65]">
-                Button Size
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['sm', 'md', 'lg'] as PebbleButtonSize[]).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setBtnSize(s)}
-                    className={`
-                      px-2.5 py-1.5 rounded-[12px] text-xs font-bold uppercase transition-all border
-                      ${btnSize === s
-                        ? 'bg-[#2D2522] text-[#FAF7F2] border-[#2D2522]'
-                        : 'bg-[#F0EAE1] text-[#786B65] border-[#E2D8CC]'
-                      }
-                    `}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* State Toggles */}
-            <div className="pt-2 border-t border-[#F0EAE1] space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#786B65]">
-                State Flags
-              </label>
-              <div className="flex flex-col gap-2.5">
-                <PebbleCheckbox
-                  checked={btnDisabled}
-                  onChange={setBtnDisabled}
-                  label="Chalk & Slumber (Disabled)"
-                  subtext="Volumetric ridge flattens completely into surface"
-                />
-                <PebbleCheckbox
-                  checked={btnLoading}
-                  onChange={setBtnLoading}
-                  label="Loading State"
-                  subtext="Shows embedded spinning indicator"
-                />
-              </div>
-            </div>
-
-            {/* Shiver Error Trigger */}
-            <div className="pt-2 border-t border-[#F0EAE1] space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#786B65]">
-                Validation Test
-              </label>
-              <div className="flex gap-2">
-                <PebbleButton
-                  variant="coral"
-                  size="sm"
-                  onClick={() => {
-                    setInputError('A pinch more flour is needed!');
-                    setShiverCount((c) => c + 1);
-                  }}
-                >
-                  Trigger Jelly Shiver
-                </PebbleButton>
-                <PebbleButton
-                  variant="butter"
-                  size="sm"
-                  onClick={() => setInputError('')}
-                >
-                  Clear Error
-                </PebbleButton>
-              </div>
-            </div>
-
-            {/* Progress Slider */}
-            <div className="pt-2 border-t border-[#F0EAE1] space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#786B65]">
-                <span>Progress Level</span>
-                <span className="font-mono text-[#2D2522]">{progressVal}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={progressVal}
-                onChange={(e) => {
-                  playSliderTick();
-                  setProgressVal(Number(e.target.value));
-                }}
-                className="w-full accent-[#FF8A50] cursor-pointer"
-              />
-            </div>
-          </PebbleCard>
-        </div>
-
-        {/* Right Column: Live Tactile Canvas (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Active Button Canvas */}
-          <PebbleCard geometry="asymmetric-alt" padded="lg" className="space-y-6">
-            <div className="flex items-center justify-between border-b border-[#F0EAE1] pb-3">
-              <div>
-                <span className="text-xs font-bold text-[#FF8A50] uppercase tracking-wide">
-                  Live Marshmallow Button
-                </span>
-                <h3 className="font-display font-bold text-lg text-[#2D2522]">
-                  Tactile Volumetric Button
-                </h3>
-              </div>
-              <PebbleBadge color="clementine" doodle="sparkle">
-                3D Lower Ridge
-              </PebbleBadge>
-            </div>
-
-            <div className="py-6 flex flex-col items-center justify-center gap-4 bg-[#FAF7F2] rounded-[24px] border border-[#EADBCE]/50 p-6 min-h-[160px]">
-              <PebbleButton
-                variant={btnVariant}
-                size={btnSize}
-                disabled={btnDisabled}
-                loading={btnLoading}
-                tooltipNotice="Unlock morning oven pass first"
-                onClick={() => {
-                  triggerCelebration();
-                }}
+            <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setDetailOpen(true)}
+                className="p-3 bg-gray-50 hover:bg-[#F6EDF8] hover:text-[#751485] rounded-[12px] border border-gray-200 transition-all text-left cursor-pointer"
               >
-                {btnText}
-              </PebbleButton>
+                <div className="text-base mb-1">🔍</div>
+                <span>Detail Pop-up</span>
+              </button>
 
-              <p className="text-xs text-[#786B65] text-center max-w-sm">
-                Press down and release. Notice the <span className="font-semibold text-[#2D2522]">scale(0.94)</span> sink and <span className="font-semibold text-[#2D2522]">scale(1.03)</span> elastic rebound.
-              </p>
+              <button
+                type="button"
+                onClick={() => setStockOpen(true)}
+                className="p-3 bg-gray-50 hover:bg-[#EBFCEB] hover:text-[#37D243] rounded-[12px] border border-gray-200 transition-all text-left cursor-pointer"
+              >
+                <div className="text-base mb-1">🗺️</div>
+                <span>Stock Finder</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setOneQROpen(true)}
+                className="p-3 bg-gray-50 hover:bg-[#F2EFFD] hover:text-[#8059EA] rounded-[12px] border border-gray-200 transition-all text-left cursor-pointer"
+              >
+                <div className="text-base mb-1">📱</div>
+                <span>One-QR Barcode</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCartItems([{ product: configuredProduct, quantity: 2 }]);
+                  setCartOpen(true);
+                }}
+                className="p-3 bg-gray-50 hover:bg-gray-100 rounded-[12px] border border-gray-200 transition-all text-left cursor-pointer"
+              >
+                <div className="text-base mb-1">🛒</div>
+                <span>Cart Pop-up</span>
+              </button>
             </div>
-          </PebbleCard>
-
-          {/* Trench Input & Shiver Validation */}
-          <PebbleCard geometry="asymmetric" padded="lg" className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[#F0EAE1] pb-3">
-              <div>
-                <span className="text-xs font-bold text-[#EE5D50] uppercase tracking-wide">
-                  Scooped Trench
-                </span>
-                <h3 className="font-display font-bold text-lg text-[#2D2522]">
-                  Input Field & Playful Shiver
-                </h3>
-              </div>
-              <PebbleBadge color="coral" doodle="ring">
-                Elastic Shiver
-              </PebbleBadge>
-            </div>
-
-            <PebbleInput
-              label="Baking Batch Recipe"
-              placeholder="e.g. Sourdough country loaf"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              error={inputError}
-              triggerShiver={shiverCount > 0}
-              helperText="Soft scooped trench with warm Steamed Rice well (#F0EAE1)"
-              icon={
-                <svg className="w-5 h-5 text-[#786B65]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              }
-              onClear={() => setInputValue('')}
-            />
-          </PebbleCard>
-
-          {/* Wobble Bloom Toggle & Dropdown */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <PebbleCard geometry="squircle" padded="md" className="space-y-4">
-              <span className="text-xs font-bold text-[#5BB98C] uppercase tracking-wide">
-                Wobble Bloom Switch
-              </span>
-              <h4 className="font-display font-bold text-base text-[#2D2522]">
-                Organic Motion Toggle
-              </h4>
-              <p className="text-xs text-[#786B65]">
-                Switch head stretches horizontally (<code className="text-[#2D2522]">scaleX(1.25)</code>) and pops with spring inertia.
-              </p>
-
-              <div className="pt-2">
-                <PebbleToggle
-                  checked={toggleVal}
-                  onChange={setToggleVal}
-                  color={toggleColor}
-                  label={toggleVal ? 'Warm Oven Active' : 'Oven Resting'}
-                  description="Preheated at 220°C"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2 border-t border-[#F0EAE1]">
-                {(['matcha', 'clementine', 'berry'] as const).map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setToggleColor(c)}
-                    className={`px-2 py-1 rounded-[8px] text-[11px] font-bold capitalize ${toggleColor === c ? 'bg-[#2D2522] text-[#FAF7F2]' : 'bg-[#F0EAE1] text-[#786B65]'}`}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </PebbleCard>
-
-            <PebbleCard geometry="squircle" padded="md" className="space-y-4">
-              <span className="text-xs font-bold text-[#8C7CFF] uppercase tracking-wide">
-                Detached Confectionery Tray
-              </span>
-              <h4 className="font-display font-bold text-base text-[#2D2522]">
-                180° Backflip Chevron
-              </h4>
-              <p className="text-xs text-[#786B65]">
-                Trigger has scooped trench; circular chevron backflips 180° on open.
-              </p>
-
-              <PebbleDropdown
-                label="Select Morning Pastry"
-                value={dropdownVal}
-                onChange={setDropdownVal}
-                options={[
-                  { value: 'brioche', label: 'Honeycomb Brioche', hint: '$4.50' },
-                  { value: 'sourdough', label: 'Sea Salt Sourdough', hint: '$6.00' },
-                  { value: 'matcha', label: 'Cardamom Matcha Bun', hint: '$4.80' },
-                  { value: 'tart', label: 'Berry Cream Tart', hint: '$5.20' },
-                ]}
-              />
-            </PebbleCard>
-          </div>
-
-          {/* Progress Bar & Spinners */}
-          <PebbleCard geometry="asymmetric" padded="lg" className="space-y-6">
-            <div className="flex items-center justify-between border-b border-[#F0EAE1] pb-3">
-              <div>
-                <span className="text-xs font-bold text-[#F5A623] uppercase tracking-wide">
-                  Rhythmic Loading
-                </span>
-                <h3 className="font-display font-bold text-lg text-[#2D2522]">
-                  Dugout Progress & Squishy Dough Drop
-                </h3>
-              </div>
-              <PebbleBadge color="honeycomb" doodle="dot">
-                Organic Physics
-              </PebbleBadge>
-            </div>
-
-            <PebbleProgressBar
-              progress={progressVal}
-              label="Morning Hearth Fermentation"
-              sublabel="Deep dugout track (12px height) with animated candy-striping and trailing glow bead"
-              color="clementine"
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#F0EAE1]">
-              <div className="bg-[#FAF7F2] p-4 rounded-[20px] flex flex-col items-center justify-center min-h-[140px]">
-                <PebbleSpinner size="md" color="clementine" label="Squishy Dough Drop" />
-                <span className="text-[11px] text-[#786B65] mt-2 text-center">
-                  Morphs between sphere, egg, and squashed oval
-                </span>
-              </div>
-
-              <div className="bg-[#FAF7F2] p-4 rounded-[20px] flex flex-col justify-center space-y-2.5">
-                <span className="text-xs font-bold text-[#786B65]">Breathing Pebble (Skeleton):</span>
-                <PebbleSkeleton variant="title" />
-                <PebbleSkeleton variant="text" />
-                <PebbleSkeleton variant="text" width="65%" />
-                <span className="text-[11px] text-[#786B65] mt-1">
-                  1.8s calming ambient sunbeam sweep
-                </span>
-              </div>
-            </div>
-          </PebbleCard>
-
-          {/* Modal Demo Button */}
-          <div className="flex justify-center p-4 bg-[#FFFDF9] rounded-[24px] border border-[#EADBCE]/70">
-            <PebbleButton
-              variant="clementine"
-              size="lg"
-              onClick={() => setModalOpen(true)}
-              icon={
-                <svg className="w-5 h-5 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                </svg>
-              }
-            >
-              Open "Golden Dim" Modal & Sheet
-            </PebbleButton>
           </div>
         </div>
       </div>
 
-      {/* Modal & Sheet Demonstration */}
-      <PebbleModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Artisan Bakery Box"
-        subtitle="A cozy peek inside your freshly baked selection"
-        footer={
-          <>
-            <PebbleButton variant="butter" size="sm" onClick={() => setModalOpen(false)}>
-              Keep Browsing
-            </PebbleButton>
-            <PebbleButton
-              variant="clementine"
-              size="sm"
-              onClick={() => {
-                setModalOpen(false);
-                triggerCelebration();
-              }}
-            >
-              Confirm Order
-            </PebbleButton>
-          </>
-        }
-      >
-        <div className="space-y-4">
-          <PebbleCallout
-            variant="honeycomb"
-            title="Warm Morning Delivery"
-            description="All loaves are delivered in beeswax wrap with sourdough starter instructions."
-          />
+      {/* Pop-up Modals Instances */}
+      <CUProductDetailModal
+        product={configuredProduct}
+        isOpen={detailOpen}
+        onClose={() => setDetailOpen(false)}
+        onAddToCart={handleAddToCart}
+        onOpenStockChecker={() => {
+          setDetailOpen(false);
+          setStockOpen(true);
+        }}
+      />
 
-          <div className="bg-[#FAF7F2] p-4 rounded-[20px] space-y-2 border border-[#EADBCE]/50">
-            <div className="flex justify-between text-sm font-bold text-[#2D2522]">
-              <span>Sea Salt Oat Sourdough</span>
-              <span>$6.00</span>
-            </div>
-            <div className="flex justify-between text-sm font-bold text-[#2D2522]">
-              <span>Honeycomb Brioche (2x)</span>
-              <span>$9.00</span>
-            </div>
-            <div className="border-t border-[#E2D8CC] pt-2 flex justify-between font-bold text-[#2D2522]">
-              <span>Total</span>
-              <span className="text-[#FF8A50]">$15.00</span>
-            </div>
-          </div>
+      <CUStockModal
+        product={configuredProduct}
+        isOpen={stockOpen}
+        onClose={() => setStockOpen(false)}
+      />
 
-          <p className="text-xs text-[#786B65]">
-            Notice the <span className="font-semibold text-[#2D2522]">Golden Dim</span> cocoa backdrop blur (<code className="text-[#2D2522]">rgba(45,37,34,0.35)</code>) and plump 36px squircle radius!
-          </p>
-        </div>
-      </PebbleModal>
+      <CUOneQRModal
+        isOpen={oneQROpen}
+        onClose={() => setOneQROpen(false)}
+      />
+
+      <CUCartModal
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        items={cartItems}
+        onUpdateQuantity={(pid, delta) => {
+          setCartItems((prev) =>
+            prev
+              .map((i) => (i.product.id === pid ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i))
+              .filter(Boolean) as CartItem[]
+          );
+        }}
+        onCheckout={() => {
+          confetti();
+          alert('Order placed successfully!');
+          setCartOpen(false);
+        }}
+      />
     </div>
   );
 };
